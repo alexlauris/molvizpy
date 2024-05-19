@@ -45,7 +45,7 @@ def get_molecule_name_from_smiles(smiles):
     else:
         return "No compound found for the given SMILES."
 
-def point_group_from_smiles(smiles):  
+"""def point_group_from_smiles(smiles):  
 
     # Convert SMILES to a molecule object
     mol = Chem.MolFromSmiles(smiles)
@@ -79,4 +79,23 @@ if __name__ == "__main__":
     mol_name = get_molecule_name_from_smiles(smiles_name)
 
     if pg:
-        print(f"Point group of {mol_name} is {pg}")
+        print(f"Point group of {mol_name} is {pg}")"""
+
+def point_group_from_sdf(sdf_string):
+    mol = Chem.MolFromMolBlock(sdf_string)
+    
+    if mol is not None:  
+        conf = mol.GetConformer()
+        coordinates_list = []
+        atom_symbols = []
+        for atom in mol.GetAtoms():
+            aid = atom.GetIdx()
+            pos = conf.GetAtomPosition(aid)
+            coordinates_list.append([pos.x, pos.y, pos.z])
+            atom_symbols.append(atom.GetSymbol())
+    else:
+        print("Invalid SDF input. Please provide a valid SDF string.")
+        return None
+
+    pg = PointGroup(positions= coordinates_list, symbols=atom_symbols)
+    return pg.get_point_group()
