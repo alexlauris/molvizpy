@@ -1,23 +1,26 @@
 import streamlit as st
-from molvizpy import point_group_from_smiles, get_smiles_from_name_or_confirm_smiles, get_molecule_name_from_smiles
+from molvizpy import *
+import time
 
 # Title of the app
 st.title('MolVizPy')
 
 # User input for common name or SMILES
-input_string = st.text_input('Enter a common name or SMILES string:')
+identifier_type = st.selectbox(label = "Choose an identifier", options = ['Name', 'SMILES', 'InChi', 'InChiKey', 'CID'])
+identifier = st.text_input('Enter a molecule identifier (Name, SMILES, InChi, InChiKey, CID)')
+
+
 
 # Button to process the input
 if st.button('Get Molecule Point Group'):
-    # Convert common name to SMILES if necessary and get properties
-    smiles = get_smiles_from_name_or_confirm_smiles(input_string)
-    mol_name = get_molecule_name_from_smiles(smiles)
-    if smiles:
-        pg = point_group_from_smiles(smiles)
-        if pg:
-            # Display the results
-            st.write('Point group', pg)
-        else:
-            st.error('Could not get molecule properties.')
+    sdf_file = get_sdf(identifier, identifier_type)
+    pg = pg_from_sdf(identifier, identifier_type)
+    if pg:
+        with st.spinner(text="In progress"):
+            time.sleep(3)
+            st.success(pg)
+        #st.write(pg)
     else:
-        st.error('Invalid input or no compound found.')
+        st.error('Could not get molecule properties.')
+    
+
