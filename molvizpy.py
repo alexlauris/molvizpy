@@ -427,7 +427,7 @@ def identify_chemical_identifier(input_string):
         if is_valid_molecule(input_string):
             return input_string
         else:
-            return "Error"
+            return "Unknown format"
     else:
         return "Unknown format"
 
@@ -454,36 +454,18 @@ def pg_from_sdf(identifier, identifier_type):
         return "Invalid SDF input. Please provide a valid input."
 
 
-def view3D(data_cache, identifier, identifier_type, style='All', linewidth='1', radius='0.2', scale='1'):
-    """Visualize a molecule in 3D"""
-    
-    # Check if the SDF file is already cached
-    if identifier not in sdf_cache:
-        # Fetch the SDF file for the new molecule identifier
-        sdf = get_sdf(identifier, identifier_type)
-        if not sdf:
-            print("Failed to fetch SDF file.")
-            return None
-        # Cache the loaded SDF file
-        sdf_cache[identifier] = sdf
-    else:
-        sdf = sdf_cache[identifier]
-    
-    view = py3Dmol.view(width=1000, height=1000)
-    add_model(view, sdf, style, linewidth, radius, scale)
-    view.zoomTo()
-    
-    if style == 'All':
-        view = py3Dmol.view(width=1500, height=800, viewergrid=(1,3), linked=True)
-        add_model(view, sdf, 'All', linewidth, radius, scale)
-    return view
-"""
-interact(view3D, data_cache=fixed(cache), 
-         identifier='ethanol',
-         identifier_type=['Name', 'SMILES', 'InChi', 'InChiKey', 'CID'],
-         style=style_dropdown,
-         linewidth=linewidth_slider,
-         radius=radius_slider,
-         scale=scale_slider)
+def add_model(view, sdf, style, linewidth, radius, scale):
+    """Add the SDF model to the 3Dmol view and apply the given style."""
+    view.addModel(sdf, 'sdf')
+    view.setBackgroundColor('#000000')
+    if style == 'line':
+        view.setStyle({'line': {'linewidth': linewidth}})
+    elif style == 'stick':
+        view.setStyle({'stick': {'radius': radius}})
+    elif style == 'sphere':
+        view.setStyle({'sphere': {'scale': scale}})
+    elif style == 'All':
+        view.setStyle({'line': {'linewidth': linewidth}}, viewer=(0,0))
+        view.setStyle({'stick': {'radius': radius}}, viewer=(0,1))
+        view.setStyle({'sphere': {'scale': scale}}, viewer=(0,2))
 
-style_dropdown.observe(lambda change: update_visibility(change['new']), names='value')"""
