@@ -4,6 +4,9 @@ import py3Dmol
 from rdkit import Chem
 from rdkit.Chem import AllChem
 @st.cache_data
+#TO DO : 
+ #   - L'APP "RESET" A CHAQUE FOIS Q'UN SETTING EST CHANGE : VOIR POUR IMPLEMENTER UNE FCT main() (voir copilot brave)
+    
 
 # Updated makeblock function with SMILES validation
 def makeblock(smi):

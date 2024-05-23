@@ -1,8 +1,79 @@
-To do:
-- Write code for errors in functions and classes
-- Add more features to interacting with the 3D viewer (DONE)
-- Add more features for 2D viewer (DONE)
-- Created data cache (DONE)
-- Add code to get pdb files (DONE)
-- Add code to download sdf and pdb files to use in 3D visualization (DONE)
-- Linewidth doesn't seem to change  
+![Project Logo](assets/banner.png)
+
+![Coverage Status](assets/coverage-badge.svg)
+
+<h1 align="center">
+molvizpy
+</h1>
+
+<br>
+
+
+{'MolVizPy': 'A Python package for molecular visualization, symmetry analysis, geometry optimization, and conformational exploration. Easily visualize chemical structures in both 2D and 3D, determine point groups, and optimize molecular geometries.'}
+
+## 🔥 Usage
+
+```python
+from mypackage import main_func
+
+# One line to rule them all
+result = main_func(data)
+```
+
+This usage example shows how to quickly leverage the package's main functionality with just one line of code (or a few lines of code). 
+After importing the `main_func` (to be renamed by you), you simply pass in your `data` and get the `result` (this is just an example, your package might have other inputs and outputs). 
+Short and sweet, but the real power lies in the detailed documentation.
+
+## 👩‍💻 Installation
+
+Create a new environment, you may also give the environment a different name. 
+
+```
+conda create -n molvizpy python=3.10 
+```
+
+```
+conda activate molvizpy
+(conda_env) $ pip install .
+```
+
+If you need jupyter lab, install it 
+
+```
+(molvizpy) $ pip install jupyterlab
+```
+
+
+## 🛠️ Development installation
+
+Initialize Git (only for the first time). 
+
+Note: You should have create an empty repository on `https://github.com:alexlauris/molvizpy`.
+
+```
+git init
+git add * 
+git add .*
+git commit -m "Initial commit" 
+git branch -M main
+git remote add origin git@github.com:alexlauris/molvizpy.git 
+git push -u origin main
+```
+
+Then add and commit changes as usual. 
+
+To install the package, run
+
+```
+(molvizpy) $ pip install -e ".[test,doc]"
+```
+
+### Run tests and coverage
+
+```
+(conda_env) $ pip install tox
+(conda_env) $ tox
+```
+
+
+

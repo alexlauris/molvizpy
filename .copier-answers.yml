@@ -1,0 +1,12 @@
+# Changes here will be overwritten by Copier; NEVER EDIT MANUALLY
+_commit: 66fd52c
+_src_path: gh:schwallergroup/copier-liac-minimal
+author_email: alexandre.lauris@epfl.ch
+author_name: Alex
+github_org: alexlauris
+package_name: molvizpy
+project_name: molvizpy
+short_description:
+    MolVizPy: A Python package for molecular visualization, symmetry analysis, geometry
+        optimization, and conformational exploration. Easily visualize chemical structures
+        in both 2D and 3D, determine point groups, and optimize molecular geometries.
