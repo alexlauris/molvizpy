@@ -7,6 +7,7 @@ import numpy as np
 import py3Dmol
 import os
 import re
+import json
 import ipywidgets as widgets
 from ipywidgets import interact, fixed, IntSlider, Text, Dropdown, ToggleButton, Button, FloatSlider, Checkbox
 from IPython.display import display
@@ -23,6 +24,7 @@ IPythonConsole.ipython_useSVG=True
 IPythonConsole.molSize = 300,300
 from pointgroup import PointGroup
 import pymsym
+from pyscf import gto, scf, geomopt
 
 class DataCache:
     def __init__(self):
@@ -469,3 +471,36 @@ def add_model(view, sdf, style, linewidth, radius, scale):
         view.setStyle({'stick': {'radius': radius}}, viewer=(0,1))
         view.setStyle({'sphere': {'scale': scale}}, viewer=(0,2))
 
+
+def optimize_geometry(sdf_content):
+    # Create a molecule object from the SDF content
+    mol = gto.Mole()
+    mol.fromstring(sdf_content, format='sdf')
+    mol.build()
+
+    # Run the Hartree-Fock calculation
+    mf = scf.RHF(mol)
+    mf.kernel()
+
+    # Perform the geometry optimization
+    optimized_mol = geomopt.optimize(mf)
+
+    return optimized_mol
+
+def perform_optimization(identifier, identifier_type):
+    # Retrieve the SDF file using the provided function
+    sdf_data = get_sdf(identifier, identifier_type)
+    
+    # Perform geometry optimization
+    optimized_molecule = optimize_geometry(sdf_data)
+    
+    # Return the optimized molecule
+    return optimized_molecule
+
+def get_molecule_code(molecule_name, file_path='molecules.json'):
+    with open(file_path, 'r') as file:
+        data = json.load(file)
+        for molecule in data["molList"]:
+            if molecule["name"].lower() == molecule_name.lower():
+                return molecule["pg"]
+    return "Molecule name not found."
