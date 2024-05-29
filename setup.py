@@ -4,6 +4,7 @@ import os
 
 VERSION = '0.0.1'
 DESCRIPTION = 'Molvizpy'
+LONG_DESCRIPTION = ""
 
 # Setting up
 setup(
@@ -12,15 +13,13 @@ setup(
     author="molvizpy",
     author_email="<alexandre.lauris@epfl.ch>",
     description=DESCRIPTION,
+    long_description=LONG_DESCRIPTION,
     packages=find_packages(),
-    install_requires=[],
+    install_requires=["streamlit"],
     keywords=['python', 'chemistry', 'visualization'],
-    classifiers=[
-        "Development Status :: 1 - Planning",
-        "Intended Audience :: Developers",
-        "Programming Language :: Python :: 3",
-        "Operating System :: Unix",
-        "Operating System :: MacOS :: MacOS X",
-        "Operating System :: Microsoft :: Windows",
-    ]
+    entry_points={
+        "console_scripts": [
+            "molvizpy_app = molvizpy.app:main",
+        ],
+    },
 )

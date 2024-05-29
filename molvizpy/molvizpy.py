@@ -653,3 +653,6 @@ with tab2:
    
     render_prot(identifier, global_style, global_color, global_radius, global_scale, surface=surface_box, opacity=opacity_nbr)
 
+
+
+
