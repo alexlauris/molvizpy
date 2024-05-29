@@ -3,7 +3,7 @@ molvizpy
 </h1>
 
 <br>
-![Molvizpy](/repository/assets/app_base?raw=true "Molvizpy")
+![Molvizpy](/repository/assets/app_base.png?raw=true "Molvizpy")
 
 
 
