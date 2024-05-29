@@ -3,7 +3,8 @@ molvizpy
 </h1>
 
 <br>
-https://github.com/alexlauris/molvizpy/blob/main/molvizpy/assets/app_base.png?raw=true![image](https://github.com/alexlauris/molvizpy/assets/160853619/1b0f48d4-39ae-41db-865f-898d0b7465af)
+![Molvizpy](/repository/assets/app_base?raw=true "Molvizpy")
+
 
 
 
