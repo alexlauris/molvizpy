@@ -10,10 +10,14 @@ molvizpy
 ## Usage
 
 ```python
-from mypackage import main_func
-
-# One line to rule them all
-result = main_func(data)
+# Install the package the the desired (example to \documents)
+git clone https://github.com/alexlauris/molvizpy.git
+cd \path\to\documents
+cd molvizpy
+cd molvizpy # Yes two times
+conda env create -f molvizpy.yml
+streamlit run molvizpy.py
+# To stop the program, press Ctrl + C in the terminal
 ```
 
 This usage example shows how to quickly leverage the package's main functionality with just one line of code (or a few lines of code). 
