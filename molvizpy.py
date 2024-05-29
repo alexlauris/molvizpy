@@ -9,22 +9,19 @@ import os
 import re
 import json
 import ipywidgets as widgets
+from Bio.PDB import PDBParser, PDBList
 from ipywidgets import interact, fixed, IntSlider, Text, Dropdown, ToggleButton, Button, FloatSlider, Checkbox
 from IPython.display import display
 obMol = openbabel.OBMol()
 obConv = openbabel.OBConversion()
 """IMPORTANT: DO NOT USE ANY OTHER VARIABLES NAMED obMol OR obConv!!!"""
-
 from rdkit.Chem import Draw
 from rdkit.Chem.Draw import IPythonConsole
 from rdkit.Chem import rdCIPLabeler
 from rdkit.Chem import rdAbbreviations
-IPythonConsole.drawOptions.addAtomIndices = False
-IPythonConsole.ipython_useSVG=True
-IPythonConsole.molSize = 300,300
-from pointgroup import PointGroup
+
 import pymsym
-from pyscf import gto, scf, geomopt
+
 
 class DataCache:
     def __init__(self):
@@ -54,7 +51,6 @@ class DataCache:
         elif target == 'all':
             for key, value in self.cache.items():
                 print(f"Data type: {key}; Data: {value}")
-
 
 class converter:
     def __init__(self, data: str, data_type: str, data_cache: DataCache):
@@ -406,17 +402,6 @@ def add_model(view, sdf):
     view.addModel(sdf, 'sdf')
     view.setBackgroundColor('#000000')
 
-"""    if style == 'line':
-        view.setStyle({'line': {'linewidth': linewidth}})
-    elif style == 'stick':
-        view.setStyle({'stick': {'radius': radius}})
-    elif style == 'sphere':
-        view.setStyle({'sphere': {'scale': scale}})
-    elif style == 'All':
-        view.setStyle({'line': {'linewidth': linewidth}}, viewer=(0,0))
-        view.setStyle({'stick': {'radius': radius}}, viewer=(0,1))
-        view.setStyle({'sphere': {'scale': scale}}, viewer=(0,2))"""
-
 def get_smiles_from_name(common_name):
     try:
         compounds = pcp.get_compounds(common_name, 'name')
@@ -429,7 +414,54 @@ def is_valid_molecule(molecule_name):
     molecule = Chem.MolFromSmiles(smiles)
     return molecule is not None
 
+def get_pdb(identifier):
+    directory = './PDBfiles/'
+    if not os.path.exists(directory):
+        os.makedirs(directory)
 
+    # Define the file path for the PDB file
+    pdb_file = os.path.join(directory, f"{identifier}.pdb")
+
+    # Check if the PDB file already exists
+    if not os.path.exists(pdb_file):
+        # Fetch the PDB file from the RCSB PDB database
+        pdbl = PDBList()
+        pdbl.retrieve_pdb_file(identifier, pdir=directory, file_format='pdb')
+        print(f"PDB file '{pdb_file}' not found.")
+        print(f"Current directory contents: {os.listdir(directory)}")
+        
+        # Rename the file to match the identifier
+        fetched_file = os.path.join(directory, f"pdb{identifier.lower()}.ent")
+        if os.path.exists(fetched_file):
+            os.rename(fetched_file, pdb_file)
+    
+    try:
+        with open(pdb_file, 'r') as f:
+            pdb_content = f.read()
+    except Exception as e:
+        print(f"Error reading PDB file '{pdb_file}': {e}")
+        return None
+    
+    return pdb_content
+
+def add_protein_model(view, pdb_content, global_style, global_color, global_radius, global_scale, surface, opacity):
+    """Add the PDB model to the 3Dmol view and apply the given style."""
+    try:
+        view.addModel(pdb_content, 'pdb')
+    except Exception as e:
+        raise RuntimeError(f"Error adding model to the view: {e}")
+    view.setBackgroundColor('#000000')
+    
+    # Apply global styles
+    if global_style == 'cartoon':
+        view.setStyle({'cartoon': {'color': global_color}})
+    elif global_style == 'stick':
+        view.setStyle({'stick': {'colorscheme': global_color, 'radius': global_radius}})
+    elif global_style == 'sphere':
+        view.setStyle({'sphere': {'colorscheme': global_color, 'scale': global_scale}})
+    
+    if surface:
+        view.addSurface(py3Dmol.VDW, {'opacity': opacity, 'color': 'spectrum'})
 
 
 def identify_chemical_identifier(input_string):
@@ -467,9 +499,6 @@ def identify_chemical_identifier(input_string):
     else:
         return "Unknown format"
 
-
-from rdkit import Chem
-
 def pg_from_sdf(identifier, identifier_type):
     sdf_string = get_sdf(identifier, identifier_type)
     mol = Chem.MolFromMolBlock(sdf_string)
@@ -484,40 +513,10 @@ def pg_from_sdf(identifier, identifier_type):
             coordinates_list.append([pos.x, pos.y, pos.z])
             atomic_numbers.append(atom.GetAtomicNum())
         
-        # Use the pymsym package to get the point group
         pg = pymsym.get_point_group(atomic_numbers=atomic_numbers, positions=coordinates_list)
         return f"Point group of {mol_name} is {pg}"
     else:
         return "Invalid SDF input. Please provide a valid input."
-
-
-
-
-"""
-def optimize_geometry(sdf_content):
-    # Create a molecule object from the SDF content
-    mol = gto.Mole()
-    mol.fromstring(sdf_content, format='sdf')
-    mol.build()
-
-    # Run the Hartree-Fock calculation
-    mf = scf.RHF(mol)
-    mf.kernel()
-
-    # Perform the geometry optimization
-    optimized_mol = geomopt.optimize(mf)
-
-    return optimized_mol
-
-def perform_optimization(identifier, identifier_type):
-    # Retrieve the SDF file using the provided function
-    sdf_data = get_sdf(identifier, identifier_type)
-    
-    # Perform geometry optimization
-    optimized_molecule = optimize_geometry(sdf_data)
-    
-    # Return the optimized molecule
-    return optimized_molecule"""
 
 def get_molecule_code(molecule_name, file_path='molecules.json'):
     with open(file_path, 'r') as file:

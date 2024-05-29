@@ -6,7 +6,7 @@ import rdkit.Chem as Chem
 from stmol import showmol
 from streamlit_ketcher import st_ketcher
 
-
+st.title('MolVizPy')
 tab1, tab2 = st.tabs(["General molecules", "Proteins"])
 with tab1:
     @st.cache_data
@@ -18,28 +18,19 @@ with tab1:
         else:
             sdf_file = get_sdf(identifier, identifier_type)
             add_model(view, sdf=sdf_file)
-    #        mol_supplier = Chem.SDMolSupplier(removeHs = False)
-    #        mol_supplier.SetData(sdf_file)
-    #        mol = next(mol_supplier, None)
             if sdf_file is None:
                 st.error("Error: Unable to load the molecule from the SDF data.")
             else:
-                ##style = st.selectbox('Choose visualization style:', ['stick', 'sphere', 'line'])
                 if style == "line":
-                ## linewidth = st.slider('Select linewidth:', 0.1, 2.0, 1.0)
                     radius = 1.0
                 elif style in ["sphere", "stick"]:
-                    ##radius = st.slider('Select radius:', 0.05, 2.0, 0.20)
+
                     linewidth = 1.0
 
-                # Configure the 3Dmol.js view
-    #        xyzview.setBackgroundColor('white')
-    #        xyzview.addModel(Chem.MolToMolBlock(mol), 'mol')  # Convert RDKit Mol to MolBlock
             view.setStyle({style: {"radius": radius, 'linewidth': linewidth}})
             view.zoomTo()
             showmol(view, height=500, width=500)
 
-    st.title('MolVizPy')
 
     initial_text = "ethanol"
     identifier_type = st.selectbox(label = "Choose an identifier", options = ['Name', 'SMILES', 'InChi', 'InChiKey', 'CID'])
@@ -59,12 +50,6 @@ with tab1:
     if identifier == "":
         identifier = identifier2
         identifier_type = identifier_type2
-
-
-
-
-
-
 
     if st.button('Get Molecule Point Group'):
         molecule_name = identify_chemical_identifier(identifier)
@@ -94,7 +79,45 @@ with tab1:
     render_mol(identifier, identifier_type, radius, linewidth, style)
 
 
-    if st.button("Optimize and Visualize"):
-        optimized_molecule = perform_optimization(smiles, 'smiles')
-        st.write("Optimized coordinates:")
-        st.write(optimized_molecule.atom_coords())
+
+
+with tab2:
+    @st.cache_data
+    def render_prot(identifier, global_style, global_color, global_radius, global_scale, surface, opacity):
+        pdb_content = get_pdb(identifier)
+        if pdb_content is None:
+            st.error("Error: Unable to identify the molecule.")
+        else:
+            view = py3Dmol.view(width=800, height=800)
+            if surface_box:
+                view.addSurface(py3Dmol.VDW)
+            add_protein_model(view, pdb_content, global_style, global_color, global_radius, global_scale, surface, opacity)
+            view.zoomTo()
+            showmol(view, height=800, width=800)
+
+    initial_text = "1A2C"
+    identifier = st.text_input("Input PDB code", value=initial_text)
+    surface_box = st.checkbox("Enable accessible surface area")
+    if surface_box:
+        opacity_nbr = st.slider("Choose opacity of ASA :", 0.0, 1.0, 0.20)
+    else:
+        opacity_nbr = 1.0
+
+    global_style = st.selectbox('Choose visualization style:', ['cartoon', 'sphere', 'stick'])
+    if global_style == "cartoon":
+        global_color = "spectrum"
+        global_radius = 0.0
+        global_scale = 0.0
+
+    elif global_style == "sphere":
+        global_scale = st.slider('Select scale:', 0.0, 1.0, 0.20)
+        global_color = st.selectbox("Choose visualization color:", ["spectrum", "chain", "element"])
+        global_radius = 0.2
+
+    elif global_style == "stick":
+        global_scale = 1.0
+        global_color = st.selectbox("Choose visualization color:", ["spectrum", "chain", "element"])
+        global_radius = st.slider('Select radius:', 0.0, 1.0, 0.20)
+   
+    render_prot(identifier, global_style, global_color, global_radius, global_scale, surface=surface_box, opacity=opacity_nbr)
+
