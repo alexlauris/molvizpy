@@ -3,7 +3,8 @@ molvizpy
 </h1>
 
 <br>
-![alt text](https://github.com/alexlauris/molvizpy/blob/main/molvizpy/assets/app_base.png?raw=true)
+https://github.com/alexlauris/molvizpy/blob/main/molvizpy/assets/app_base.png?raw=true![image](https://github.com/alexlauris/molvizpy/assets/160853619/1b0f48d4-39ae-41db-865f-898d0b7465af)
+
 
 
 MolVizPy': 'A Python package for molecular visualization, symmetry analysis. Easily visualize chemical structures in both 2D and 3D and determine point groups
