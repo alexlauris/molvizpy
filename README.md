@@ -7,7 +7,7 @@ molvizpy
 
 {'MolVizPy': 'A Python package for molecular visualization, symmetry analysis. Easily visualize chemical structures in both 2D and 3D and determine point groups'}
 
-## 🔥 Usage
+## Usage
 
 ```python
 from mypackage import main_func
@@ -20,9 +20,9 @@ This usage example shows how to quickly leverage the package's main functionalit
 After importing the `main_func` (to be renamed by you), you simply pass in your `data` and get the `result` (this is just an example, your package might have other inputs and outputs). 
 Short and sweet, but the real power lies in the detailed documentation.
 
-## 👩‍💻 Installation
+## Installation
 
-Create a new environment, you may also give the environment a different name. 
+Create a new environment, you may also give the environment a different name! 
 
 ```
 conda create -n molvizpy python=3.10 
@@ -30,7 +30,6 @@ conda create -n molvizpy python=3.10
 
 ```
 conda activate molvizpy
-(molvizpy) $ pip install .
 ```
 
 If you need jupyter lab, install it 
@@ -40,7 +39,7 @@ If you need jupyter lab, install it
 ```
 
 
-## 🛠️ Development installation
+## Development installation
 
 Initialize Git (only for the first time). 
 
