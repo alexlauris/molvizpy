@@ -34,7 +34,7 @@ conda create -n molvizpy python=3.10
 
 ```
 conda activate molvizpy
-(conda_env) $ pip install .
+(molvizpy) $ pip install .
 ```
 
 If you need jupyter lab, install it 
@@ -75,5 +75,10 @@ To install the package, run
 (conda_env) $ tox
 ```
 
+### License
+This project is licensed under the MIT License - see the LICENSE file for details.
+
+### Contact
+For any issues, questions, or suggestions, please open an issue on GitHub or contact the maintainer at alexandre.lauris@epfl.ch
 
 
