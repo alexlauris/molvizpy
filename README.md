@@ -1,7 +1,3 @@
-![Project Logo](assets/banner.png)
-
-![Coverage Status](assets/coverage-badge.svg)
-
 <h1 align="center">
 molvizpy
 </h1>
@@ -9,7 +5,7 @@ molvizpy
 <br>
 
 
-{'MolVizPy': 'A Python package for molecular visualization, symmetry analysis, geometry optimization, and conformational exploration. Easily visualize chemical structures in both 2D and 3D, determine point groups, and optimize molecular geometries.'}
+{'MolVizPy': 'A Python package for molecular visualization, symmetry analysis. Easily visualize chemical structures in both 2D and 3D and determine point groups'}
 
 ## 🔥 Usage
 
