@@ -4,11 +4,24 @@ from molvizpy import *
 import time
 import rdkit.Chem as Chem
 from stmol import showmol
+from streamlit_ketcher import st_ketcher
+
 
 st.title('MolVizPy')
 
+
 identifier_type = st.selectbox(label = "Choose an identifier", options = ['Name', 'SMILES', 'InChi', 'InChiKey', 'CID'])
 identifier = st.text_input('Enter a molecule identifier (Name, SMILES, InChi, InChiKey, CID)')
+st.write("Or draw the molecule ⬇️")
+st.markdown("*Note: the app will prioritize the above's box so if you want to use the drawing option, make sure nothing is in the text box.*")
+
+smiles = st_ketcher()
+if smiles:
+    sdf_file2 = get_sdf(smiles, "smiles")
+    identifier2 = smiles
+    identifier_type2 = "smiles"
+else:
+    st.error("No molecule drawn!")
 
 @st.cache_data
 def render_mol(identifier, identifier_type, radius, linewidth, style):
@@ -43,8 +56,18 @@ def render_mol(identifier, identifier_type, radius, linewidth, style):
             xyzview.zoomTo()
             showmol(xyzview, height=500, width=500)
 
+# FAIRE QUE SI RIEN DANS LE TEXT BOX -> ALORS DESSIN UTILISE A LA PLACE (DONE?)
+# MTN FAIRE EN SORTE QUE SI LE SMILES -> MOL_NAME EXISTE DEJA DANS JSON -> PG DU JSON SINON UTILISER FORMULE
+
+if identifier == "":
+    identifier = identifier2
+    identifier_type = identifier_type2
+
 
 if st.button('Get Molecule Point Group'):
+    pg = get_molecule_code()
+    
+    
     sdf_file = get_sdf(identifier, identifier_type)
     pg = pg_from_sdf(identifier, identifier_type)
     if pg:
@@ -61,3 +84,9 @@ if st.button("Visualize molecule"):
 
 
     render_mol(identifier, identifier_type, radius, linewidth, style)
+
+
+if st.button("Optimize and Visualize"):
+    optimized_molecule = perform_optimization(smiles, 'smiles')
+    st.write("Optimized coordinates:")
+    st.write(optimized_molecule.atom_coords())
