@@ -34,7 +34,5 @@ Axel Tracol Gavard (TheAPTG)
 ### License
 This project is licensed under the MIT License - see the LICENSE file for details.
 
-### Contact
-For any issues, questions, or suggestions, please open an issue on GitHub or contact the maintainer at alexandre.lauris@epfl.ch
 
 
