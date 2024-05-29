@@ -8,7 +8,11 @@ molvizpy
 MolVizPy': 'A Python package for molecular visualization, symmetry analysis. Easily visualize chemical structures in both 2D and 3D and determine point groups
 
 ## Usage
-Open the app and test it, it's fun!
+The app will not use the ketcher input if a molecule identifier is in the text input! 
+Input a molecule identifier and find its symmetry group, or look at the 3D structure. Or draw the molecule if you prefer! 
+You can also visualize the 3D structure of a protein by inputing its PDB code!
+
+If you need the SDF files or PDB files for later use, you can easily find them in 3Dfiles or PDBfiles!
 
 ## Installation
 ```python
