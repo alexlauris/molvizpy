@@ -5,7 +5,7 @@ molvizpy
 <br>
 
 
-{'MolVizPy': 'A Python package for molecular visualization, symmetry analysis. Easily visualize chemical structures in both 2D and 3D and determine point groups'}
+MolVizPy': 'A Python package for molecular visualization, symmetry analysis. Easily visualize chemical structures in both 2D and 3D and determine point groups
 
 ## Usage
 Open the app and test it, it's fun!
@@ -18,12 +18,13 @@ cd \path\to\documents
 cd molvizpy
 cd molvizpy # Yes two times
 conda env create -f molvizpy.yml
+conda activate molvizpy
 streamlit run molvizpy.py
 # To stop the program, press Ctrl + C in the terminal
 ```
 
 ### Collaborators
-Alex Lauris (alexlauris) 
+Alex Lauris (alexlauris) <br>
 Axel Tracol Gavard (TheAPTG)
 
 ### License
