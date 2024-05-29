@@ -242,7 +242,7 @@ class converter:
         try:
             file_path = f'./3Dfiles/{self.data}.sdf'
             try:
-                pcp.download('SDF', file_path, self.data, 'smiles', overwrite=True)
+                pcp.download('SDF', file_path, self.data, 'smiles', overwrite=True, record_type='3d')
                 with open(file_path, 'r') as f:
                     return f.read()
             except Exception as e:
@@ -256,7 +256,7 @@ class converter:
         try:
             file_path = f'./3Dfiles/{self.data}.sdf'
             try:
-                pcp.download('SDF', file_path, self.data, 'name', overwrite=True)
+                pcp.download('SDF', file_path, self.data, 'name', overwrite=True, record_type='3d')
                 with open(file_path, 'r') as f:
                     return f.read()
             except Exception as e:
@@ -270,7 +270,7 @@ class converter:
         try:
             file_path = f'./3Dfiles/{self.data}.sdf'
             try:
-                pcp.download('SDF', file_path, self.data, 'inchi', overwrite=True)
+                pcp.download('SDF', file_path, self.data, 'inchi', overwrite=True, record_type='3d')
                 with open(file_path, 'r') as f:
                     return f.read()
             except Exception as e:
@@ -284,7 +284,7 @@ class converter:
         try:
             file_path = f'./3Dfiles/{self.data}.sdf'
             try:
-                pcp.download('SDF', file_path, self.data, 'inchikey', overwrite=True)
+                pcp.download('SDF', file_path, self.data, 'inchikey', overwrite=True, record_type='3d')
                 with open(file_path, 'r') as f:
                     return f.read()
             except Exception as e:
@@ -298,7 +298,7 @@ class converter:
         try:
             file_path = f'./3Dfiles/{self.data}.sdf'
             try:
-                pcp.download('SDF', file_path, self.data, 'cid', overwrite=True)
+                pcp.download('SDF', file_path, self.data, 'cid', overwrite=True, record_type='3d')
                 with open(file_path, 'r') as f:
                     return f.read()
             except Exception as e:
@@ -401,37 +401,72 @@ def get_sdf(identifier, identifier_type):
 
     return sdf
 
+def add_model(view, sdf):
+    """Add the SDF model to the 3Dmol view and apply the given style."""
+    view.addModel(sdf, 'sdf')
+    view.setBackgroundColor('#000000')
+
+"""    if style == 'line':
+        view.setStyle({'line': {'linewidth': linewidth}})
+    elif style == 'stick':
+        view.setStyle({'stick': {'radius': radius}})
+    elif style == 'sphere':
+        view.setStyle({'sphere': {'scale': scale}})
+    elif style == 'All':
+        view.setStyle({'line': {'linewidth': linewidth}}, viewer=(0,0))
+        view.setStyle({'stick': {'radius': radius}}, viewer=(0,1))
+        view.setStyle({'sphere': {'scale': scale}}, viewer=(0,2))"""
+
+def get_smiles_from_name(common_name):
+    try:
+        compounds = pcp.get_compounds(common_name, 'name')
+        return compounds[0].isomeric_smiles
+    except IndexError:
+        return None
+
+def is_valid_molecule(molecule_name):
+    smiles = get_smiles_from_name(molecule_name) if not Chem.MolFromSmiles(molecule_name) else molecule_name
+    molecule = Chem.MolFromSmiles(smiles)
+    return molecule is not None
+
+
+
 
 def identify_chemical_identifier(input_string):
     cid_pattern = r'^\d+$'
-    smiles_pattern = r'^[CcNnOoPpSsFfClBrIi%0-9=\-\[\]\(\)\/\+\#\$:\.\,\\\/\@]+$'
+    smiles_pattern = r'^[CcNnOoPpSsFfClBrIi%0-9=\-\[\]\(\)\/\+\#\$:\.\,\\\/\@\*\@Hh\\\/\|]+$'
     inchi_pattern = r'^InChI=1S?\/[0-9A-Za-z\.\/\-\(\),]+$'
     inchikey_pattern = r'^[A-Z]{14}-[A-Z]{10}-[A-Z]$'
     name_pattern = r'^[a-zA-Z0-9\s\-]+[a-zA-Z0-9\s\-]*$'
 
     if re.match(cid_pattern, input_string):
-        mol_name_input = converter(input_string, "CID", cache)
-        mol_name = mol_name_input.convert("name")
+        cid = pcp.get_compounds(input_string, 'cid')
+        name = cid[0].synonyms
+        mol_name = name[0]
         return mol_name
     elif re.match(smiles_pattern, input_string):
-        mol_name_input = converter(input_string, "SMILES", cache)
-        mol_name = mol_name_input.convert("name")
+        smiles = pcp.get_compounds(input_string, 'smiles')
+        name = smiles[0].synonyms
+        mol_name = name[0]
         return mol_name
     elif re.match(inchi_pattern, input_string):
-        mol_name_input = converter(input_string, "inchi", cache)
-        mol_name = mol_name_input.convert("name")
+        inchi = pcp.get_compounds(input_string, 'inchi')
+        name = inchi[0].synonyms
+        mol_name = name[0]
         return mol_name
     elif re.match(inchikey_pattern, input_string):
-        mol_name_input = converter(input_string, "inchikey", cache)
-        mol_name = mol_name_input.convert("name")
+        inchikey = pcp.get_compounds(input_string, 'inchikey')
+        name = inchikey[0].synonyms
+        mol_name = name[0]
         return mol_name
     elif re.match(name_pattern, input_string):
         if is_valid_molecule(input_string):
             return input_string
         else:
-            return "Unknown format"
+            return "Error"
     else:
         return "Unknown format"
+
 
 from rdkit import Chem
 
@@ -456,22 +491,9 @@ def pg_from_sdf(identifier, identifier_type):
         return "Invalid SDF input. Please provide a valid input."
 
 
-def add_model(view, sdf, style, linewidth, radius, scale):
-    """Add the SDF model to the 3Dmol view and apply the given style."""
-    view.addModel(sdf, 'sdf')
-    view.setBackgroundColor('#000000')
-    if style == 'line':
-        view.setStyle({'line': {'linewidth': linewidth}})
-    elif style == 'stick':
-        view.setStyle({'stick': {'radius': radius}})
-    elif style == 'sphere':
-        view.setStyle({'sphere': {'scale': scale}})
-    elif style == 'All':
-        view.setStyle({'line': {'linewidth': linewidth}}, viewer=(0,0))
-        view.setStyle({'stick': {'radius': radius}}, viewer=(0,1))
-        view.setStyle({'sphere': {'scale': scale}}, viewer=(0,2))
 
 
+"""
 def optimize_geometry(sdf_content):
     # Create a molecule object from the SDF content
     mol = gto.Mole()
@@ -495,12 +517,13 @@ def perform_optimization(identifier, identifier_type):
     optimized_molecule = optimize_geometry(sdf_data)
     
     # Return the optimized molecule
-    return optimized_molecule
+    return optimized_molecule"""
 
 def get_molecule_code(molecule_name, file_path='molecules.json'):
     with open(file_path, 'r') as file:
         data = json.load(file)
         for molecule in data["molList"]:
             if molecule["name"].lower() == molecule_name.lower():
-                return molecule["pg"]
-    return "Molecule name not found."
+                pg = molecule["pg"]
+                return f"Point group of {molecule_name} is {pg}"
+    return None
